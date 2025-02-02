@@ -16,10 +16,11 @@ fn main() {
         let last = fibonacci[length - 1];
         let before_last = fibonacci[length - 2];
 
-        let next_fibonacci = U256::from(last + before_last);
-        
-        fibonacci.push(next_fibonacci);
-
-        println!("{}", next_fibonacci);
+        if let Some(next_fibonacci) = last.checked_add(before_last) {
+            fibonacci.push(next_fibonacci);
+            println!("{}", next_fibonacci);
+        } else {
+            panic!("Out of range!");
+        }
     }
 }
