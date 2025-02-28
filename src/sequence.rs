@@ -5,6 +5,13 @@ impl ConsecutiveTerms {
         terms.0 + terms.1
     }
 
+    pub fn new(term_1: Option<u32>, term_2: Option<u32>) -> ConsecutiveTerms {
+        let term_1 = term_1.unwrap_or(0);
+        let term_2 = term_2.unwrap_or(1);
+
+        ConsecutiveTerms(term_1, term_2)
+    }
+
     pub fn next(&self) -> ConsecutiveTerms {
         let next = ConsecutiveTerms::nth_term_recurrence_relation(self);
         ConsecutiveTerms(self.1, next)
@@ -16,6 +23,14 @@ mod tests {
     use super::ConsecutiveTerms;
 
     const REFERENCE_SEQUENCE: [u32; 10] = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+
+    #[test]
+    fn undeclared_initial_terms() {
+        let sequence = ConsecutiveTerms::new(None, None);
+
+        assert_eq!(sequence.0, 0);
+        assert_eq!(sequence.1, 1);
+    }
 
     #[test]
     fn are_first_10_consecutives_fibonacci() {
