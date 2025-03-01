@@ -22,8 +22,6 @@ impl ConsecutiveTerms {
 mod tests {
     use super::ConsecutiveTerms;
 
-    const REFERENCE_SEQUENCE: [u32; 10] = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
-
     #[test]
     fn undeclared_initial_terms_fallbacks() {
         let sequence = ConsecutiveTerms::new(None, None);
@@ -42,18 +40,13 @@ mod tests {
 
     #[test]
     fn are_first_10_consecutives_fibonacci() {
-        let mut sequence: Vec<u32> = vec![0, 1];
+        let mut terms = ConsecutiveTerms::new(None, None);
+        let reference = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34];
 
-        for i in 0..9 {
-            let length = sequence.len();
-            let last = sequence[length - 1];
-            let before_last = sequence[length - 2];
+        for i in 2..reference.len() {
+            terms = terms.next();
 
-            let terms = ConsecutiveTerms(before_last, last);
-
-            sequence.push(terms.next().1);
-
-            assert_eq!(sequence.last(), Some(&REFERENCE_SEQUENCE[i]));
+            assert_eq!(terms.1, reference[i]);
         }
     }
 }
