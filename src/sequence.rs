@@ -33,6 +33,14 @@ mod tests {
     }
 
     #[test]
+    fn declared_initial_terms() {
+        let sequence = ConsecutiveTerms(3, 5);
+
+        assert_eq!(sequence.0, 3);
+        assert_eq!(sequence.1, 5);
+    }
+
+    #[test]
     fn are_first_10_consecutives_fibonacci() {
         let mut sequence: Vec<u32> = vec![0, 1];
 
