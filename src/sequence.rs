@@ -25,7 +25,7 @@ mod tests {
     const REFERENCE_SEQUENCE: [u32; 10] = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
     #[test]
-    fn undeclared_initial_terms() {
+    fn undeclared_initial_terms_fallbacks() {
         let sequence = ConsecutiveTerms::new(None, None);
 
         assert_eq!(sequence.0, 0);
