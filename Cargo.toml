@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-uint = "0.10.0"
+num-traits = "0.2.19"
