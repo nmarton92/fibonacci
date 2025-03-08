@@ -1,28 +1,34 @@
-pub struct ConsecutiveTerms(pub u32, pub u32);
+use num_traits::Num;
+use std::ops::Add;
 
-impl ConsecutiveTerms {
-    fn nth_term_recurrence_relation(term_1: &u32, term_2: &u32) -> u32 {
-        term_1 + term_2
+pub struct ConsecutiveTerms<T: Num>(pub T, pub T);
+
+impl<T> ConsecutiveTerms<T>
+where
+    T: Num + Add<Output = T> + Clone + Copy,
+{
+    fn nth_term_recurrence_relation(term_1: &T, term_2: &T) -> T {
+        term_1.clone() + term_2.clone()
     }
 
-    fn nth_term_recurrence_relation_backwards(term_1: &u32, term_2: &u32) -> u32 {
-        term_2 - term_1
+    fn nth_term_recurrence_relation_backwards(term_1: &T, term_2: &T) -> T {
+        term_2.clone() - term_1.clone()
     }
 
-    pub fn new(term_1: Option<u32>, term_2: Option<u32>) -> Result<ConsecutiveTerms, String> {
-        let term_1 = term_1.unwrap_or(0);
-        let term_2 = term_2.unwrap_or(1);
+    pub fn new(term_1: Option<T>, term_2: Option<T>) -> Result<ConsecutiveTerms<T>, String> {
+        let term_1 = term_1.unwrap_or(T::zero());
+        let term_2 = term_2.unwrap_or(T::one());
 
         Ok(ConsecutiveTerms(term_1, term_2))
     }
 
-    pub fn next(&self) -> Result<ConsecutiveTerms, String> {
+    pub fn next(&self) -> Result<ConsecutiveTerms<T>, String> {
         let next = ConsecutiveTerms::nth_term_recurrence_relation(&self.0, &self.1);
         Ok(ConsecutiveTerms(self.1, next))
     }
 
-    pub fn prev(&self) -> Result<ConsecutiveTerms, String> {
-        if self.0 == 0 {
+    pub fn prev(&self) -> Result<ConsecutiveTerms<T>, String> {
+        if self.0 == T::zero() {
             return Err("End of sequence.".to_string());
         }
 
@@ -37,7 +43,7 @@ mod tests {
 
     #[test]
     fn undeclared_initial_terms_fallbacks() {
-        let terms = ConsecutiveTerms::new(None, None).unwrap();
+        let terms: ConsecutiveTerms<u32> = ConsecutiveTerms::new(None, None).unwrap();
 
         assert_eq!(terms.0, 0);
         assert_eq!(terms.1, 1);
@@ -45,7 +51,7 @@ mod tests {
 
     #[test]
     fn declared_initial_terms() {
-        let terms = ConsecutiveTerms::new(Some(3), Some(5)).unwrap();
+        let terms: ConsecutiveTerms<u32> = ConsecutiveTerms::new(Some(3), Some(5)).unwrap();
 
         assert_eq!(terms.0, 3);
         assert_eq!(terms.1, 5);
@@ -54,7 +60,7 @@ mod tests {
     #[test]
     fn are_first_10_consecutives_fibonacci() {
         let reference = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34];
-        let mut terms = ConsecutiveTerms::new(None, None).unwrap();
+        let mut terms: ConsecutiveTerms<u32> = ConsecutiveTerms::new(None, None).unwrap();
 
         for i in 2..reference.len() {
             terms = terms.next().unwrap();
@@ -64,9 +70,9 @@ mod tests {
     }
 
     #[test]
-    fn are_first_10_consecutives_fibonacci_backwords() {
+    fn are_first_10_consecutives_fibonacci_backwards() {
         let reference = [34, 21, 13, 8, 5, 3, 2, 1, 1, 0];
-        let mut terms = ConsecutiveTerms::new(Some(21), Some(34)).unwrap();
+        let mut terms: ConsecutiveTerms<u32> = ConsecutiveTerms::new(Some(21), Some(34)).unwrap();
 
         for i in 2..reference.len() {
             terms = terms.prev().unwrap();
