@@ -36,3 +36,22 @@ where
         Ok(ConsecutiveTerms(previous, self.0))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::ConsecutiveTerms;
+
+    #[test]
+    fn recurrence_relation() {
+        let term = ConsecutiveTerms::nth_term_recurrence_relation(&3, &5);
+
+        assert_eq!(term, 8)
+    }
+
+    #[test]
+    fn recurrence_relation_backwards() {
+        let term = ConsecutiveTerms::nth_term_recurrence_relation_backwards(&3, &5);
+
+        assert_eq!(term, 2)
+    }
+}
