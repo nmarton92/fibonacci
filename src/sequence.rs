@@ -1,57 +1,70 @@
-use num_traits::Num;
-use std::ops::Add;
+use crate::formula;
 
-pub struct ConsecutiveTerms<T: Num>(pub T, pub T);
+pub struct Sequence {
+    previous: u32,
+    current: u32,
+}
 
-impl<T> ConsecutiveTerms<T>
-where
-    T: Num + Add<Output = T> + Clone + Copy,
-{
-    fn nth_term_recurrence_relation(term_1: &T, term_2: &T) -> T {
-        term_1.clone() + term_2.clone()
-    }
+impl Sequence {
+    pub fn new(nth: u32) -> Sequence {
+        let current = formula::binet_formula(nth);
+        let previous = if nth > 1 { formula::binet_formula(nth - 1) } else { 0 };
 
-    fn nth_term_recurrence_relation_backwards(term_1: &T, term_2: &T) -> T {
-        term_2.clone() - term_1.clone()
-    }
-
-    pub fn new(term_1: Option<T>, term_2: Option<T>) -> Result<ConsecutiveTerms<T>, String> {
-        let term_1 = term_1.unwrap_or(T::zero());
-        let term_2 = term_2.unwrap_or(T::one());
-
-        Ok(ConsecutiveTerms(term_1, term_2))
-    }
-
-    pub fn next(&self) -> Result<ConsecutiveTerms<T>, String> {
-        let next = ConsecutiveTerms::nth_term_recurrence_relation(&self.0, &self.1);
-        Ok(ConsecutiveTerms(self.1, next))
-    }
-
-    pub fn prev(&self) -> Result<ConsecutiveTerms<T>, String> {
-        if self.0 == T::zero() {
-            return Err("End of sequence.".to_string());
+        Sequence {
+            previous,
+            current,
         }
+    }
 
-        let previous = ConsecutiveTerms::nth_term_recurrence_relation_backwards(&self.0, &self.1);
-        Ok(ConsecutiveTerms(previous, self.0))
+    pub fn recurrence_relation(previous: &u32, current: &u32) -> u32 {
+        if *previous == 0 {
+            1
+        } else {
+            previous + current
+        }
+    }
+}
+
+impl Iterator for Sequence {
+    type Item = u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let next = Sequence::recurrence_relation(&self.previous, &self.current);
+
+        self.previous = self.current;
+        self.current = next;
+
+        Some(self.current)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::ConsecutiveTerms;
+    use super::Sequence;
 
     #[test]
-    fn recurrence_relation() {
-        let term = ConsecutiveTerms::nth_term_recurrence_relation(&3, &5);
+    fn sequence_starts_with_zero() {
+        let mut fibonacci = Sequence::new(0);
 
-        assert_eq!(term, 8)
+        fibonacci.next();
+
+        assert_eq!(fibonacci.current, 1);
+        assert_eq!(fibonacci.previous, 0);
+
+        fibonacci.next();
+
+        assert_eq!(fibonacci.current, 1);
+        assert_eq!(fibonacci.previous, 1);
     }
 
     #[test]
-    fn recurrence_relation_backwards() {
-        let term = ConsecutiveTerms::nth_term_recurrence_relation_backwards(&3, &5);
+    fn check_five_consecutive_terms() {
+        let mut fibonacci = Sequence::new(3);
 
-        assert_eq!(term, 2)
+        assert_eq!(fibonacci.next(), Some(3));
+        assert_eq!(fibonacci.next(), Some(5));
+        assert_eq!(fibonacci.next(), Some(8));
+        assert_eq!(fibonacci.next(), Some(13));
+        assert_eq!(fibonacci.next(), Some(21));
     }
 }
