@@ -43,12 +43,21 @@ mod tests {
     use super::Sequence;
 
     #[test]
-    fn sequence_starts_with_zero() {
+    fn starts_with_zero() {
         let mut fibonacci = Sequence::new(0);
+
+        assert_eq!(fibonacci.previous, 0);
 
         fibonacci.next();
 
         assert_eq!(fibonacci.current, 1);
+        assert_eq!(fibonacci.previous, 0);
+    }
+
+    #[test]
+    fn starts_with_one() {
+        let mut fibonacci = Sequence::new(1);
+
         assert_eq!(fibonacci.previous, 0);
 
         fibonacci.next();
@@ -58,13 +67,14 @@ mod tests {
     }
 
     #[test]
-    fn check_five_consecutive_terms() {
-        let mut fibonacci = Sequence::new(3);
+    fn starts_with_greater_than_one() {
+        let mut fibonacci = Sequence::new(5);
 
-        assert_eq!(fibonacci.next(), Some(3));
-        assert_eq!(fibonacci.next(), Some(5));
-        assert_eq!(fibonacci.next(), Some(8));
-        assert_eq!(fibonacci.next(), Some(13));
-        assert_eq!(fibonacci.next(), Some(21));
+        assert_eq!(fibonacci.previous, 3);
+
+        fibonacci.next();
+
+        assert_eq!(fibonacci.previous, 5);
+        assert_eq!(fibonacci.current, 8);
     }
 }
