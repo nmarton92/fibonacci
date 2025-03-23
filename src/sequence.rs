@@ -1,19 +1,13 @@
 use crate::formula;
 
-pub struct Sequence {
-    previous: u32,
-    current: u32,
-}
+pub struct ConsecutiveTerms(u32, u32);
 
-impl Sequence {
-    pub fn new(nth: u32) -> Sequence {
+impl ConsecutiveTerms {
+    pub fn new(nth: u32) -> ConsecutiveTerms {
         let current = formula::binet_formula(nth);
         let previous = if nth > 1 { formula::binet_formula(nth - 1) } else { 0 };
 
-        Sequence {
-            previous,
-            current,
-        }
+        ConsecutiveTerms(previous, current)
     }
 
     fn recurrence_relation(previous: &u32, current: &u32) -> u32 {
@@ -25,56 +19,56 @@ impl Sequence {
     }
 }
 
-impl Iterator for Sequence {
+impl Iterator for ConsecutiveTerms {
     type Item = u32;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let next = Sequence::recurrence_relation(&self.previous, &self.current);
+        let next = ConsecutiveTerms::recurrence_relation(&self.0, &self.1);
 
-        self.previous = self.current;
-        self.current = next;
+        self.0 = self.1;
+        self.1 = next;
 
-        Some(self.current)
+        Some(self.1)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Sequence;
+    use super::ConsecutiveTerms;
 
     #[test]
     fn starts_with_zero() {
-        let mut fibonacci = Sequence::new(0);
+        let mut fibonacci = ConsecutiveTerms::new(0);
 
-        assert_eq!(fibonacci.previous, 0);
+        assert_eq!(fibonacci.0, 0);
 
         fibonacci.next();
 
-        assert_eq!(fibonacci.current, 1);
-        assert_eq!(fibonacci.previous, 0);
+        assert_eq!(fibonacci.1, 1);
+        assert_eq!(fibonacci.0, 0);
     }
 
     #[test]
     fn starts_with_one() {
-        let mut fibonacci = Sequence::new(1);
+        let mut fibonacci = ConsecutiveTerms::new(1);
 
-        assert_eq!(fibonacci.previous, 0);
+        assert_eq!(fibonacci.0, 0);
 
         fibonacci.next();
 
-        assert_eq!(fibonacci.current, 1);
-        assert_eq!(fibonacci.previous, 1);
+        assert_eq!(fibonacci.1, 1);
+        assert_eq!(fibonacci.0, 1);
     }
 
     #[test]
     fn starts_with_greater_than_one() {
-        let mut fibonacci = Sequence::new(5);
+        let mut fibonacci = ConsecutiveTerms::new(5);
 
-        assert_eq!(fibonacci.previous, 3);
+        assert_eq!(fibonacci.0, 3);
 
         fibonacci.next();
 
-        assert_eq!(fibonacci.previous, 5);
-        assert_eq!(fibonacci.current, 8);
+        assert_eq!(fibonacci.0, 5);
+        assert_eq!(fibonacci.1, 8);
     }
 }

@@ -1,8 +1,8 @@
-use fibonacci::sequence::Sequence;
+use fibonacci::sequence::ConsecutiveTerms;
 
 #[test]
 fn first_ten_consecutive_terms() {
-    let mut fibonacci = Sequence::new(0);
+    let mut fibonacci = ConsecutiveTerms::new(0);
 
     assert_eq!(fibonacci.next(), Some(1));
     assert_eq!(fibonacci.next(), Some(1));
