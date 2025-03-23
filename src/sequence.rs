@@ -3,6 +3,14 @@ use crate::formula;
 pub struct ConsecutiveTerms(u32, u32);
 
 impl ConsecutiveTerms {
+    /// Creates two consecutives from the Fibonacci sequence.
+    /// It calculates the number at the given `nth` position, and the preceeding number.
+    /// 
+    /// # Example
+    /// ```
+    /// use fibonacci::sequence::ConsecutiveTerms;
+    /// let mut fibonacci = ConsecutiveTerms::new(6);
+    /// ```
     pub fn new(nth: u32) -> ConsecutiveTerms {
         let current = formula::binet_formula(nth);
         let previous = if nth > 1 { formula::binet_formula(nth - 1) } else { 0 };
