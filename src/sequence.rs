@@ -16,7 +16,7 @@ impl Sequence {
         }
     }
 
-    pub fn recurrence_relation(previous: &u32, current: &u32) -> u32 {
+    fn recurrence_relation(previous: &u32, current: &u32) -> u32 {
         if *previous == 0 {
             1
         } else {
